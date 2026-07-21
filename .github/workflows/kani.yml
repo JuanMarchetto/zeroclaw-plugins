@@ -1,0 +1,22 @@
+name: kani-proofs
+
+# Fork-side by design: the upstream plugin PR (feat/jupiter-swap-guard) must not
+# touch .github/, so the Kani proofs run on this dedicated branch and PROOFS.md
+# links a specific green run here. Runs on push to this branch and on demand.
+on:
+  push:
+    branches: [ci-kani]
+  workflow_dispatch:
+
+jobs:
+  kani:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: plugins/jupiter-swap-guard
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Kani proofs (encoder integrity: P6 malleability, P7 crash-safety)
+        uses: model-checking/kani-github-action@v1.1
+        with:
+          working-directory: plugins/jupiter-swap-guard
